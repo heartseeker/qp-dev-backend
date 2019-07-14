@@ -42,6 +42,27 @@ router.get('/states/:state', async function (req, res) {
     });
 });
 
+// get state counties
+//========================================================================
+router.get('/states/:statecode/counties', async function (req, res) {
+
+    const directoryPath = folder +  req.params.statecode;
+
+    fs.readdir(directoryPath, function (err, files) {
+        //handling error
+        if (err) {
+            return console.log('Unable to scan directory: ' + err);
+        } 
+
+        const names = [];
+        files.forEach(file => {
+            names.push({ name: file.replace('.geo.json', '') });
+        });
+
+        res.json(names);
+    });
+});
+
 
 // get county details
 //========================================================================
