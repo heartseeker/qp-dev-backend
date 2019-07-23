@@ -12,6 +12,8 @@ const folder = './USA/';
 
 const utilty = require('../utilities/functions');
 
+const Bookmark = require('../models/bookmark');
+
 const request = require('request');
 const cheerio = require('cheerio');
 const cheerioTableparser = require('cheerio-tableparser');
@@ -29,6 +31,27 @@ router.get('/', function (req, res) {
     res.send('qp api');
 });
 
+router.post('/bookmark', async (req, res) => {
+    const payload = req.body;
+
+    const data = new Bookmark({ data: payload });
+    const save = await data.save();
+    if (save) {
+        setTimeout(() => {
+            res.send({ id: save._id });
+        }, 5000);
+    }
+});
+
+router.get('/bookmark/:id', async (req, res) => {
+    const data = await Bookmark.findById(req.params.id);
+
+    if (data) {
+        res.send(data);
+    } else {
+        res.status(403).json({ msg: 'Bad Request' });
+    }
+});
 
 // get state details
 //========================================================================
@@ -303,30 +326,5 @@ router.get('/states/:state/county/:county', async function (req, res) {
     });
     
 });
-
-
-// // products
-// //========================================================================
-// router.get('/products', function (req, res) {
-
-//     var url_parts = url.parse(req.url, true);
-//     var query = url_parts.search;
-
-//     wooCommerce.getAsync('products' + query).then(function(result) {
-//         res.json(JSON.parse(result.toJSON().body));
-//     });
-// });
-
-// // search products
-// //========================================================================
-// router.get('/products/search/:q', function (req, res) {
-
-//     var url_parts = url.parse(req.url, true);
-//     var query = url_parts.search;
-
-//     wooCommerce.getAsync('products?filter[q]=' + req.params.id + query).then(function(result) {
-//         res.json(JSON.parse(result.toJSON().body));
-//     });
-// });
 
 module.exports = router;
