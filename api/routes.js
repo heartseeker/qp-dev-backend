@@ -37,9 +37,7 @@ router.post('/bookmark', async (req, res) => {
     const data = new Bookmark({ data: payload });
     const save = await data.save();
     if (save) {
-        setTimeout(() => {
-            res.send({ id: save._id });
-        }, 5000);
+        res.send({ id: save._id });
     }
 });
 
